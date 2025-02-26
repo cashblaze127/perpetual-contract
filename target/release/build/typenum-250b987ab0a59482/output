@@ -1,0 +1,3 @@
+cargo:rerun-if-changed=build/main.rs
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/who/contract/target/release/build/typenum-250b987ab0a59482/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/who/contract/target/release/build/typenum-250b987ab0a59482/out/op.rs

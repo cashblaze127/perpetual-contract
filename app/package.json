@@ -1,0 +1,29 @@
+{
+  "scripts": {
+    "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
+    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+    "test:init": "npx tsx scripts/init_program.ts",
+    "test:createpool": "npx tsx scripts/create_pool.ts",
+    "test:addcustody": "npx tsx scripts/add_custody.ts",
+    "test:update": "npx tsx scripts/oracle_price_updater.ts",
+    "test:addliquidity": "npx tsx scripts/add_liquidity.ts",
+    "test:openposition": "npx tsx scripts/open_position.ts"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.26.0",
+    "@solana/spl-token": "^0.3.6",
+    "@solana/web3.js": "^1.70.1",
+    "bs58": "^5.0.0",
+    "commander": "^10.0.0",
+    "fs": "^0.0.1-security",
+    "js-sha256": "^0.9.0",
+    "jsbi": "^4",
+    "node-fetch": "^3.3.0",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.1",
+    "prettier": "^2.8.1",
+    "typescript": "^4.9.4"
+  }
+}
