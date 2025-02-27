@@ -451,16 +451,24 @@ impl Custody {
         let collective_position = self.get_collective_position(position.side)?;
         let interest_usd = self.get_interest_amount_usd(&collective_position, curtime)?;
 
-        // update positions
         let stats = if position.side == Side::Long {
+            msg!("update long positions");
             &mut self.long_positions
         } else {
+            msg!("update short positions");
             &mut self.short_positions
         };
 
         stats.open_positions = math::checked_add(stats.open_positions, 1)?;
+        msg!("stats.open_positions: {}", stats.open_positions);
+
         stats.size_usd = math::checked_add(stats.size_usd, position.size_usd)?;
+        msg!("stats.size_usd: {}", stats.size_usd);
+        msg!("position.size_usd: {}", position.size_usd);
+
         stats.locked_amount = math::checked_add(stats.locked_amount, position.locked_amount)?;
+        msg!("stats.locked_amount: {}", stats.locked_amount);
+        msg!("position.locked_amount: {}", position.locked_amount);
 
         // update borrowed size and cumulative interest only if trading token custody is the collateral custody
         if collateral_custody.is_none() {
@@ -528,7 +536,7 @@ impl Custody {
                 math::checked_add(stats.borrow_size_usd, position.borrow_size_usd)?;
         }
 
-        msg!("Update stats.size_usd: {}", stats.size_usd);
+        msg!("Update add_position stats.size_usd: {}", stats.size_usd);
         Ok(())
     }
 
@@ -544,25 +552,26 @@ impl Custody {
         let cumulative_interest_snapshot = self.get_cumulative_interest(curtime)?;
         let position_interest_usd = self.get_interest_amount_usd(position, curtime)?;
 
-        msg!("Update custody stats 1");
-        // update stats
+        // // update stats
+        // let stats = if position.side == Side::Long {
+        //     &mut self.long_positions
+        // } else {
+        //     &mut self.short_positions
+        // };
+
+        // update positions
         let stats = if position.side == Side::Long {
+            msg!("remove long positions");
             &mut self.long_positions
         } else {
+            msg!("remove short positions");
             &mut self.short_positions
         };
-
-        msg!("position.side: {:?}", position.side);
-        msg!("stats.size_usd: {}", stats.size_usd);
-
-        msg!("Update custody stats 2");
 
         if stats.open_positions == 1 {
             *stats = PositionStats::default();
             return Ok(());
         }
-
-        msg!("Update custody stats 3");
 
         // update borrowed size and cumulative interest only if trading token custody is the collateral custody
         if collateral_custody.is_none() {
@@ -576,20 +585,12 @@ impl Custody {
                 math::checked_sub(stats.borrow_size_usd, position.borrow_size_usd)?;
         }
 
-        msg!("Update custody stats 4");
-
+        msg!("stats.open_positions: {}", stats.open_positions);
         stats.open_positions = math::checked_sub(stats.open_positions, 1)?;
-
-        msg!("Update stats.size_usd: {}", stats.size_usd);
-        msg!("Update stats.open_positions: {}", stats.open_positions);
-
+        msg!("stats.size_usd: {}", stats.size_usd);
         stats.size_usd = math::checked_sub(stats.size_usd, position.size_usd)?;
-
-        msg!("Update custody stats 6");
-
+        msg!("stats.locked_amount: {}", stats.locked_amount);
         stats.locked_amount = math::checked_sub(stats.locked_amount, position.locked_amount)?;
-
-        msg!("Update custody stats 7");
 
         let position_price = math::scale_to_exponent(
             position.price,
@@ -600,10 +601,12 @@ impl Custody {
             math::checked_mul(position.size_usd as u128, Perpetuals::BPS_POWER)?,
             position_price as u128,
         )?;
+        msg!("stats.weighted_price: {}", stats.weighted_price);
         stats.weighted_price = math::checked_sub(
             stats.weighted_price,
             math::checked_mul(position.price as u128, quantity)?,
         )?;
+        msg!("stats.total_quantity: {}", stats.total_quantity);
         stats.total_quantity = math::checked_sub(stats.total_quantity, quantity)?;
 
         // update collateral custody for interest tracking

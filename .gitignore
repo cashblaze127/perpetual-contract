@@ -1,0 +1,57 @@
+# Ignore target directory for build artifacts
+/target/
+
+# Ignore Cargo.lock for libraries
+Cargo.lock
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+
+# Ignore node_modules for TypeScript projects
+/app/node_modules/
+
+# Ignore build output for TypeScript projects
+/app/dist/
+/app/build/
+
+# Ignore local environment files
+.env
+.env.local
+
+# Ignore debug files
+*.log
+*.swp
+*.swo
+
+# Ignore OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Ignore Anchor IDL and program key files
+/tests/
+/program/target/
+/program/.anchor/
+/program/.cargo/
+/program/.vscode/
+/program/.idea/
+/program/Cargo.lock
+/program/target/
+/program/.DS_Store
+/program/.env
+/program/.env.local
+/program/*.log
+/program/*.swp
+/program/*.swo
+/program/.DS_Store
+/program/.DS_Store?
+/program._*
+/program.Spotlight-V100
+/program.Trashes
+/program.ehthumbs.db
+/program.Thumbs.db

@@ -331,45 +331,47 @@ pub fn open_position(ctx: Context<OpenPosition>, params: &OpenPositionParams) ->
         math::checked_add(collateral_custody.assets.protocol_fees, protocol_fee)?;
 
     // if custody and collateral_custody accounts are the same, ensure that data is in sync
-    if position.side == Side::Long && !custody.is_virtual {
-        collateral_custody.volume_stats.open_position_usd = collateral_custody
-            .volume_stats
-            .open_position_usd
-            .wrapping_add(size_usd);
+    collateral_custody.volume_stats.open_position_usd = collateral_custody
+        .volume_stats
+        .open_position_usd
+        .wrapping_add(size_usd);
 
-        if params.side == Side::Long {
-            collateral_custody.trade_stats.oi_long_usd =
-                math::checked_add(collateral_custody.trade_stats.oi_long_usd, size_usd)?;
-        } else {
-            collateral_custody.trade_stats.oi_short_usd =
-                math::checked_add(collateral_custody.trade_stats.oi_short_usd, size_usd)?;
-        }
-
-        collateral_custody.add_position(position, &token_ema_price, curtime, None)?;
-        collateral_custody.update_borrow_rate(curtime)?;
-        *custody = collateral_custody.clone();
+    if params.side == Side::Long {
+        collateral_custody.trade_stats.oi_long_usd =
+            math::checked_add(collateral_custody.trade_stats.oi_long_usd, size_usd)?;
     } else {
-        custody.volume_stats.open_position_usd = custody
-            .volume_stats
-            .open_position_usd
-            .wrapping_add(size_usd);
-
-        if params.side == Side::Long {
-            custody.trade_stats.oi_long_usd =
-                math::checked_add(custody.trade_stats.oi_long_usd, size_usd)?;
-        } else {
-            custody.trade_stats.oi_short_usd =
-                math::checked_add(custody.trade_stats.oi_short_usd, size_usd)?;
-        }
-
-        custody.add_position(
-            position,
-            &token_ema_price,
-            curtime,
-            Some(collateral_custody),
-        )?;
-        collateral_custody.update_borrow_rate(curtime)?;
+        collateral_custody.trade_stats.oi_short_usd =
+            math::checked_add(collateral_custody.trade_stats.oi_short_usd, size_usd)?;
     }
+
+    collateral_custody.add_position(position, &token_ema_price, curtime, None)?;
+    collateral_custody.update_borrow_rate(curtime)?;
+    *custody = collateral_custody.clone();
+    // if position.side == Side::Long && !custody.is_virtual {
+    // } else {
+    //     custody.volume_stats.open_position_usd = custody
+    //         .volume_stats
+    //         .open_position_usd
+    //         .wrapping_add(size_usd);
+
+    //     if params.side == Side::Long {
+    //         custody.trade_stats.oi_long_usd =
+    //             math::checked_add(custody.trade_stats.oi_long_usd, size_usd)?;
+    //     } else {
+    //         custody.trade_stats.oi_short_usd =
+    //             math::checked_add(custody.trade_stats.oi_short_usd, size_usd)?;
+    //     }
+
+    //     custody.add_position(
+    //         position,
+    //         &token_ema_price,
+    //         curtime,
+    //         Some(collateral_custody),
+    //     )?;
+    //     custody.update_borrow_rate(curtime)?;
+    // }
+    msg!("Update add_position stats.long_positions.size_usd: {}", custody.long_positions.size_usd);
+    msg!("Update add_position stats.short_positions.size_usd: {}", custody.short_positions.size_usd);
 
     Ok(())
 }
