@@ -1,3 +1,0 @@
-cargo:rerun-if-changed=build/main.rs
-cargo:rustc-env=TYPENUM_BUILD_CONSTS=/who/contract/target/sbf-solana-solana/release/build/typenum-aaaf9f6741e7da08/out/consts.rs
-cargo:rustc-env=TYPENUM_BUILD_OP=/who/contract/target/sbf-solana-solana/release/build/typenum-aaaf9f6741e7da08/out/op.rs
